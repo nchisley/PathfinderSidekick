@@ -63,6 +63,7 @@ body.panel-open .content-wrapper {
     position:fixed;
     top:10px;
     left:10px;
+    z-index:1;
 }
 
 .logo {
