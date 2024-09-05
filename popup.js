@@ -3,22 +3,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const fetchButton = document.getElementById('fetchNFTs');
     const deleteButton = document.getElementById('deleteWallet');
     const nftDisplay = document.getElementById('nftDisplay');
-    const totalTraits = 15;
 
-    // Debounce function to limit the rate at which fetchNFTs can be called
-    let debounceTimeout;
-    const debounce = (func, delay) => {
-        clearTimeout(debounceTimeout);
-        debounceTimeout = setTimeout(func, delay);
-    };
+    const totalTraits = 15;  // Total number of traits in the NFT
 
     // Load stored data
     const loadStoredData = () => {
-        const storedWallet = localStorage.getItem('walletAddress');
+        const storedWalletAddress = localStorage.getItem('walletAddress');
         const storedNFTs = localStorage.getItem('nftData');
-        if (storedWallet) {
-            walletInput.value = storedWallet;
-            showStoredWalletAddress(storedWallet);
+        
+        if (storedWalletAddress) {
+            walletInput.value = storedWalletAddress;
+            showStoredWalletAddress(storedWalletAddress);
             if (storedNFTs) {
                 displayNFTs(JSON.parse(storedNFTs));
             }
@@ -27,83 +22,155 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadStoredData();
 
-    // Event listeners
-    fetchButton.addEventListener('click', () => debounce(async () => {
+    // Fetch NFTs
+    fetchButton.addEventListener('click', async () => {
         const walletAddress = walletInput.value.trim();
         if (!walletAddress) {
-            return alert('Please enter a Solana wallet address.');
+            return alert('Enter a Solana wallet address.');
         }
-        await updateNFTs(walletAddress);
-    }, 300));
 
-    deleteButton.addEventListener('click', () => {
-        localStorage.removeItem('walletAddress');
-        localStorage.removeItem('nftData');
-        walletInput.value = '';
-        nftDisplay.innerHTML = 'Wallet address and NFT data removed.';
-        deleteButton.style.display = 'none';
-    });
-
-    async function updateNFTs(walletAddress) {
         try {
             fetchButton.disabled = true;
-            fetchButton.textContent = 'Fetching NFTs...';
-            const nfts = await fetchNFTs(walletAddress);
-            localStorage.setItem('walletAddress', walletAddress);
-            localStorage.setItem('nftData', JSON.stringify(nfts));
-            displayNFTs(nfts);
-            showStoredWalletAddress(walletAddress);
+            fetchButton.textContent = 'SUMMONING...';
+            await updateNFTs(walletAddress);
         } catch (error) {
-            nftDisplay.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+            nftDisplay.innerHTML = `<span class="alert">Error fetching Pathfinders: ${error.message}</span>`;
         } finally {
             fetchButton.disabled = false;
             fetchButton.textContent = 'SUMMON';
         }
+    });
+
+    deleteButton.addEventListener('click', () => {
+        const noticeContainer = document.getElementById('noticeContainer');
+        const nftDisplay = document.getElementById('nftDisplay');
+        
+        // Clear local storage data
+        localStorage.removeItem('walletAddress');
+        localStorage.removeItem('nftData');
+        
+        // Clear the input and nft display
+        walletInput.value = '';
+        nftDisplay.innerHTML = '';
+    
+        // Clear any existing notices
+        noticeContainer.innerHTML = '';
+    
+        // Create a specific notice element
+        const notice = document.createElement('div');
+        notice.className = 'notice';
+        notice.innerHTML = 'I removed your wallet address<br>and Pathfinders.';
+        noticeContainer.appendChild(notice); // Add to the dedicated notice container
+    
+        // Hide the notice after 5 seconds
+        setTimeout(() => {
+            notice.remove(); // Only remove the notice
+        }, 5000);
+    });
+
+    async function updateNFTs(walletAddress) {
+        localStorage.setItem('walletAddress', walletAddress);
+        showStoredWalletAddress(walletAddress);
+        const nfts = await fetchNFTs(walletAddress);
+        localStorage.setItem('nftData', JSON.stringify(nfts));
+        displayNFTs(nfts);
+    }
+
+    // Utility function to truncate the wallet address
+    function truncateAddress(address) {
+        if (!address || address.length < 8) return address;
+        return `${address.substring(0, 4)}....${address.substring(address.length - 4)}`;
     }
 
     function showStoredWalletAddress(walletAddress) {
-        nftDisplay.innerHTML = `<p>Stored Wallet Address: ${walletAddress}</p>`;
+        const noticeContainer = document.getElementById('noticeContainer');
+        const truncatedAddress = truncateAddress(walletAddress); // Truncate the address
+    
+        // Clear any existing notices
+        noticeContainer.innerHTML = '';
+    
+        // Create a specific notice element
+        const notice = document.createElement('div');
+        notice.className = 'notice';
+        notice.innerHTML = `I loaded the wallet address ${truncatedAddress}<br>and your Pathfinders!`;
+        noticeContainer.appendChild(notice); // Add to the dedicated notice container
+    
         deleteButton.style.display = 'block';
+    
+        // Hide the notice after 5 seconds
+        setTimeout(() => {
+            notice.remove(); // Only remove the notice, not affecting the NFTs
+        }, 5000);
     }
-
+    
+    // Function to fetch NFTs
     async function fetchNFTs(walletAddress) {
-        const apiKey = 'n8tr0ncrypto_sk_04oj4tc4cy2eiit3etxblx0bwspp1iua'; // Note: Should be securely managed
+        const apiKey = 'n8tr0ncrypto_sk_04oj4tc4cy2eiit3etxblx0bwspp1iua';
         const url = `https://api.simplehash.com/api/v0/nfts/owners?chains=solana&wallet_addresses=${walletAddress}&collection_ids=b1fd6d81e11166a1e4ae373ba56f290e`;
+
         const response = await fetch(url, {
             headers: { 'X-API-KEY': apiKey, 'Accept': 'application/json' }
         });
+
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        return (await response.json()).nfts || [];
+
+        const { nfts } = await response.json();
+        return nfts || [];
     }
 
+    // Function to calculate progress based on traits
     function calculateProgress(traits) {
-        return ((traits.filter(trait => trait.value !== '???').length / totalTraits) * 100);
+        const filledTraits = traits.filter(trait => trait.value !== '???').length;
+        const progressPercentage = (filledTraits / totalTraits) * 100;
+        return progressPercentage;
     }
 
+    // Display NFTs with the progress bar
     function displayNFTs(nfts) {
-        nftDisplay.innerHTML = nfts.length ? '' : 'No NFTs found from the specified collection for this wallet address.';
+        const nftDisplay = document.getElementById('nftDisplay');
+        nftDisplay.innerHTML = nfts.length ? '' : '<span class="alert">No NFTs found from the specified collection for this wallet address.</span>';
+
         nfts.forEach(nft => {
             const container = document.createElement('div');
             container.className = 'nft';
-            container.innerHTML = generateNFTHTML(nft);
+
+            const traits = nft.extra_metadata?.attributes || [];
+
+            const nameElement = document.createElement('h3');
+            const firstName = traits.find(trait => trait.trait_type.toLowerCase() === 'first name')?.value || '???';
+            const lastName = traits.find(trait => trait.trait_type.toLowerCase() === 'last name')?.value || '???';
+            nameElement.textContent = `${firstName} ${lastName}`;
+            container.appendChild(nameElement);
+
+            // Create and append the progress bar
+            const progressBarContainer = document.createElement('div');
+            progressBarContainer.className = 'progress-container';
+
+            const progressBar = document.createElement('div');
+            progressBar.className = 'progress-bar';
+
+            const progressPercentage = calculateProgress(traits);
+            progressBar.style.width = `${progressPercentage}%`;  // Set progress bar width
+            progressBar.innerText = `${Math.floor(progressPercentage)}%`;  // Show percentage
+
+            progressBarContainer.appendChild(progressBar);
+            container.appendChild(progressBarContainer);
+
+            // Display NFT image
+            if (nft.image_url) {
+                const img = document.createElement('img');
+                img.src = nft.image_url;
+                img.className = 'nft-image';
+                container.appendChild(img);
+            }
+
+            const descriptionElement = document.createElement('p');
+            descriptionElement.className = 'description';
+            descriptionElement.innerHTML = generateDescription(nft);
+            container.appendChild(descriptionElement);
+
             nftDisplay.appendChild(container);
         });
-    }
-
-    function generateNFTHTML(nft) {
-        const traits = nft.extra_metadata?.attributes || [];
-        const progressPercentage = calculateProgress(traits);
-        const firstName = traits.find(t => t.trait_type.toLowerCase() === 'first name')?.value || '???';
-        const lastName = traits.find(t => t.trait_type.toLowerCase() === 'last name')?.value || '???';
-
-        return `
-            <h3>${firstName} ${lastName}</h3>
-            <div class="progress-container">
-                <div class="progress-bar" style="width:${progressPercentage}%;">${Math.floor(progressPercentage)}%</div>
-            </div>
-            ${nft.image_url ? `<img src="${nft.image_url}" class="nft-image" loading="lazy">` : ''}
-            <p class="description">${generateDescription(nft)}</p>
-        `;
     }
 
     function generateDescription(nft) {

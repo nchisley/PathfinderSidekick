@@ -116,6 +116,29 @@ input:focus {
     background-color: #e53935;
 }
 
+.notice {
+    color:#4CAF50;
+}
+
+.alert {
+    color:#f44336;
+}
+
+.notice,
+.alert {
+    width: 270px;
+    background-color: #333333;
+    text-align: center;
+    border-radius: 4px 40px 40px 40px;
+    padding: 15px;
+    position: fixed;
+    z-index: 1;
+    top: 50px; /* Position the tooltip above the image */
+    left: 40px;
+    margin-left: 0; /* Use half of the width to center the tooltip */
+    transition: opacity 0.3s;
+}
+
 #nftDisplay {
     flex-grow:1;
     display:flex;
@@ -165,18 +188,33 @@ h3 {
 
 .progress-bar {
     height: 20px;
-    background-color: #4CAF50;
+    background-color: #4c90af;
     text-align: center;
     line-height: 20px;
     color: white;
     border-radius: 15px;
 }
 
+/* Add zoom and fade-in animation */
+@keyframes zoomFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.1);
+        /*transform: rotate(0deg);*/
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+        /*transform: rotate(360deg);*/
+    }
+}
+
 .nft-image {
-    width: 100%;
+    max-width: 100%;
     height: auto;
-    margin:0;
-    border-radius:4px;
+    margin-top: 10px;
+    border-radius: 4px;
+    animation: zoomFadeIn 0.8s ease-in-out forwards; /* Apply animation */
 }
 
 .description {
@@ -200,30 +238,19 @@ h3 {
 .tooltip .tooltiptext {
     visibility: hidden;
     width: 270px;
-    background-color: #555;
+    background-color: #333333;
     color: #fff;
     text-align: center;
     border-radius: 4px 40px 40px 40px;
     padding: 15px;
     position: fixed;
-    z-index: 1;
+    z-index: 2;
     top: 50px; /* Position the tooltip above the image */
     left: 40px;
     margin-left: 0; /* Use half of the width to center the tooltip */
     opacity: 0;
     transition: opacity 0.3s;
 }
-
-/*.tooltip .tooltiptext::after {
-    content: "";
-    position: absolute;
-    top: 10%;
-    right: 100%;
-    margin-top: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent transparent transparent #555;
-}*/
 
 .tooltip:hover .tooltiptext {
     visibility: visible;
