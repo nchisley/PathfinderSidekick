@@ -1,0 +1,231 @@
+@import url('https://fonts.googleapis.com/css2?family=Solway:wght@300;400;500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=La+Belle+Aurore&family=Solway:wght@300;400;500;700;800&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+    width:10px;
+    background-color:#eeeeee;
+  }
+  
+  ::-webkit-scrollbar-button {
+    display:none;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color:#4CAF50;
+  }
+
+body {
+    width: 360px;
+    min-height: 400px;
+    max-height: 600px;
+    display:block;
+    font-family: Roboto, sans-serif;
+    padding: 0;
+    margin:0;
+    background: url(images/bg001.webp);
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+body.panel-open {
+    width: 100%;
+    min-height: 400px;
+    max-height: none;
+}
+
+.content-wrapper {
+    min-height: 400px;
+    max-height: 600px;
+    width: 360px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding:20px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+body.panel-open .content-wrapper {
+    min-height: 400px;
+    max-height: none;
+    width: 100%;
+}
+
+.leaf {
+    width:40px;
+    position:fixed;
+    top:10px;
+    left:10px;
+}
+
+.logo {
+    width:200px;
+    margin: 0 0 10px 0;
+}
+
+input {
+    padding: 10px;
+    width:100%;
+    margin:0 0 10px 0;
+    border: 2px solid transparent;
+    border-radius:4px;
+}
+
+input:focus {
+  border: 2px solid #4CAF50;
+  outline:0;
+}
+
+#buttonContainer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap:4px;
+}
+
+#buttonContainer button {
+    width: 40%;
+    padding: 10px;
+    color: white;
+    border: none;
+    border-radius:4px;
+    cursor: pointer;
+    flex-grow:1;
+}
+
+#buttonContainer .summon {
+    background-color: #4CAF50;
+}
+
+#buttonContainer .summon:hover {
+    background-color: #45a049;
+}
+
+#buttonContainer .slumber {
+    background-color: #f44336;
+}
+
+#buttonContainer .slumber:hover {
+    background-color: #e53935;
+}
+
+#nftDisplay {
+    flex-grow:1;
+    display:flex;
+    flex-direction:column;
+}
+
+.nft {
+    background-color: #fffbf7;
+    padding: 0;
+    margin-top:15px;
+    border: 2.5rem solid transparent;
+    border-image: url(https://pathfinders.gg/outlines/outline1.svg) 28 stretch;
+    border-radius: 1.5rem;
+    -webkit-clip-path: polygon(0 0, 21.5px 0, 21.5px 3.5px, calc(100% - 21.5px) 3.5px, calc(100% - 21.5px) 0, 100% 0, 100% 21.5px, calc(100% - 3.5px) 21.5px, calc(100% - 3.5px) calc(100% - 21.5px), 100% calc(100% - 21.5px), 100% 100%, calc(100% - 21.5px) 100%, calc(100% - 21.5px) calc(100% - 3.5px), 21.5px calc(100% - 3.5px), 21.5px 100%, 0 100%, 0 calc(100% - 21.5px), 3.5px calc(100% - 21.5px), 3.5px 21.5px, 0 21.5px, 0 0);
+    clip-path: polygon(0 0, 21.5px 0, 21.5px 3.5px, calc(100% - 21.5px) 3.5px, calc(100% - 21.5px) 0, 100% 0, 100% 21.5px, calc(100% - 3.5px) 21.5px, calc(100% - 3.5px) calc(100% - 21.5px), 100% calc(100% - 21.5px), 100% 100%, calc(100% - 21.5px) 100%, calc(100% - 21.5px) calc(100% - 3.5px), 21.5px calc(100% - 3.5px), 21.5px 100%, 0 100%, 0 calc(100% - 21.5px), 3.5px calc(100% - 21.5px), 3.5px 21.5px, 0 21.5px, 0 0);
+}
+
+/*.nft {
+    margin: 20px 0 0 0;
+    padding:8px;
+    background:#FFFBF7;
+    border-radius:4px;
+    border:6px double #F8CD7C;
+    flex-grow:1;
+    display:flex;
+    flex-direction:column;
+}*/
+
+h3 {
+    font-size: 16px;
+    margin:0;
+    text-align:center;
+    width:100%;
+    padding:10px;
+    font-family: "La Belle Aurore", cursive;
+    font-weight: 700;
+    font-style: normal;
+}
+
+.progress-container {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress-bar {
+    height: 20px;
+    background-color: #4CAF50;
+    text-align: center;
+    line-height: 20px;
+    color: white;
+    border-radius: 15px;
+}
+
+.nft-image {
+    width: 100%;
+    height: auto;
+    margin:0;
+    border-radius:4px;
+}
+
+.description {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.5;
+    margin:0;
+    padding:20px 0 0 0;
+    text-align: center;
+    flex-grow:1;
+    font-family: "Solway", serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 270px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px 40px 40px 40px;
+    padding: 15px;
+    position: fixed;
+    z-index: 1;
+    top: 50px; /* Position the tooltip above the image */
+    left: 40px;
+    margin-left: 0; /* Use half of the width to center the tooltip */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+/*.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 10%;
+    right: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent transparent #555;
+}*/
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
