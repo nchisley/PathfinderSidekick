@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const fetchButton = document.getElementById('fetchNFTs');
     const deleteButton = document.getElementById('deleteWallet');
     const nftDisplay = document.getElementById('nftDisplay');
+    const nftSelector = document.getElementById('nftSelector');
 
     const totalTraits = 15;  // Total number of traits in the NFT
 
@@ -52,7 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Clear the input and nft display
         walletInput.value = '';
         nftDisplay.innerHTML = '';
-    
+        nftSelector.style.display = 'none';  // Hide the dropdown
+        
         // Clear any existing notices
         noticeContainer.innerHTML = '';
     
@@ -60,11 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const notice = document.createElement('div');
         notice.className = 'notice';
         notice.innerHTML = 'I removed your wallet address<br>and Pathfinders.';
-        noticeContainer.appendChild(notice); // Add to the dedicated notice container
+        noticeContainer.appendChild(notice);
     
         // Hide the notice after 5 seconds
         setTimeout(() => {
-            notice.remove(); // Only remove the notice
+            notice.remove();
         }, 5000);
     });
 
@@ -84,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function showStoredWalletAddress(walletAddress) {
         const noticeContainer = document.getElementById('noticeContainer');
-        const truncatedAddress = truncateAddress(walletAddress); // Truncate the address
+        const truncatedAddress = truncateAddress(walletAddress);
     
         // Clear any existing notices
         noticeContainer.innerHTML = '';
@@ -93,13 +95,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const notice = document.createElement('div');
         notice.className = 'notice';
         notice.innerHTML = `I loaded the wallet address ${truncatedAddress}<br>and your Pathfinders!`;
-        noticeContainer.appendChild(notice); // Add to the dedicated notice container
+        noticeContainer.appendChild(notice);
     
         deleteButton.style.display = 'block';
     
         // Hide the notice after 5 seconds
         setTimeout(() => {
-            notice.remove(); // Only remove the notice, not affecting the NFTs
+            notice.remove();
         }, 5000);
     }
     
@@ -127,50 +129,68 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Display NFTs with the progress bar
     function displayNFTs(nfts) {
-        const nftDisplay = document.getElementById('nftDisplay');
         nftDisplay.innerHTML = nfts.length ? '' : '<span class="alert">No NFTs found from the specified collection for this wallet address.</span>';
+        if (nfts.length > 0) {
+            populateDropdown(nfts);
+            displaySingleNFT(nfts[0]);  // Display the first NFT by default
+        }
+    }
 
-        nfts.forEach(nft => {
-            const container = document.createElement('div');
-            container.className = 'nft';
+    function populateDropdown(nfts) {
+        nftSelector.style.display = 'block';
+        nftSelector.innerHTML = '';
 
-            const traits = nft.extra_metadata?.attributes || [];
-
-            const nameElement = document.createElement('h3');
-            const firstName = traits.find(trait => trait.trait_type.toLowerCase() === 'first name')?.value || '???';
-            const lastName = traits.find(trait => trait.trait_type.toLowerCase() === 'last name')?.value || '???';
-            nameElement.textContent = `${firstName} ${lastName}`;
-            container.appendChild(nameElement);
-
-            // Create and append the progress bar
-            const progressBarContainer = document.createElement('div');
-            progressBarContainer.className = 'progress-container';
-
-            const progressBar = document.createElement('div');
-            progressBar.className = 'progress-bar';
-
-            const progressPercentage = calculateProgress(traits);
-            progressBar.style.width = `${progressPercentage}%`;  // Set progress bar width
-            progressBar.innerText = `${Math.floor(progressPercentage)}%`;  // Show percentage
-
-            progressBarContainer.appendChild(progressBar);
-            container.appendChild(progressBarContainer);
-
-            // Display NFT image
-            if (nft.image_url) {
-                const img = document.createElement('img');
-                img.src = nft.image_url;
-                img.className = 'nft-image';
-                container.appendChild(img);
-            }
-
-            const descriptionElement = document.createElement('p');
-            descriptionElement.className = 'description';
-            descriptionElement.innerHTML = generateDescription(nft);
-            container.appendChild(descriptionElement);
-
-            nftDisplay.appendChild(container);
+        nfts.forEach((nft, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            const firstName = nft.extra_metadata?.attributes.find(trait => trait.trait_type.toLowerCase() === 'first name')?.value || '???';
+            const lastName = nft.extra_metadata?.attributes.find(trait => trait.trait_type.toLowerCase() === 'last name')?.value || '???';
+            option.textContent = `${firstName} ${lastName}`;
+            nftSelector.appendChild(option);
         });
+
+        nftSelector.addEventListener('change', (event) => {
+            displaySingleNFT(nfts[event.target.value]);
+        });
+    }
+
+    function displaySingleNFT(nft) {
+        nftDisplay.innerHTML = '';  // Clear previous display
+
+        const container = document.createElement('div');
+        container.className = 'nft';
+
+        const traits = nft.extra_metadata?.attributes || [];
+
+        const nameElement = document.createElement('h3');
+        const firstName = traits.find(trait => trait.trait_type.toLowerCase() === 'first name')?.value || '???';
+        const lastName = traits.find(trait => trait.trait_type.toLowerCase() === 'last name')?.value || '???';
+        nameElement.textContent = `${firstName} ${lastName}`;
+        container.appendChild(nameElement);
+
+        const progressBarContainer = document.createElement('div');
+        progressBarContainer.className = 'progress-container';
+        const progressBar = document.createElement('div');
+        progressBar.className = 'progress-bar';
+        const progressPercentage = calculateProgress(traits);
+        progressBar.style.width = `${progressPercentage}%`;
+        progressBar.innerText = `${Math.floor(progressPercentage)}%`;
+        progressBarContainer.appendChild(progressBar);
+        container.appendChild(progressBarContainer);
+
+        if (nft.image_url) {
+            const img = document.createElement('img');
+            img.src = nft.image_url;
+            img.className = 'nft-image';
+            container.appendChild(img);
+        }
+
+        const descriptionElement = document.createElement('p');
+        descriptionElement.className = 'description';
+        descriptionElement.innerHTML = generateDescription(nft);
+        container.appendChild(descriptionElement);
+
+        nftDisplay.appendChild(container);
     }
 
     function generateDescription(nft) {
@@ -180,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, {});
 
         return `
-            Meet <b>${traits["first name"] || "???"}</b> <b>${traits["last name"] || "???"}</b>, a Pathfinder like no other. 
+            <p>CHAPTER ONE<br><b>THE BEGINNING</b></p>Meet <b>${traits["first name"] || "???"}</b> <b>${traits["last name"] || "???"}</b>, a Pathfinder like no other. 
             They dress in a <b>${traits["clothes"] || "distinctive clothing"}</b> with a unique <b>${traits["accessory"] || "???"}</b> accessory. 
             They are accented by a <b>${traits["headgear"] || "???"}</b> on their head and a <b>${traits["backpiece"] || "???"}</b> on their back, adding to their remarkable appearance. 
             With a <b>${traits["expression"] || "???"}</b> expression and a <b>${traits["nose"] || "???"}</b> nose, they choose to maintain a <b>${traits["hairstyle"] || "???"}</b> hairstyle. 
