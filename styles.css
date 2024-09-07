@@ -20,8 +20,7 @@
 
 body {
     width: 360px;
-    min-height: 400px;
-    max-height: 600px;
+    height: 600px;
     display:block;
     font-family: Roboto, sans-serif;
     padding: 0;
@@ -34,14 +33,14 @@ body {
 }
 body.panel-open {
     width: 100%;
-    min-height: 400px;
-    max-height: none;
+    height: 100vh;
+    min-height:none;
+    max-height:none;
 }
 
 .content-wrapper {
-    min-height: 400px;
-    max-height: 600px;
-    width: 360px;
+    height:100vh;
+    width: 100%;
     overflow-y: auto;
     overflow-x: hidden;
     padding:20px;
@@ -52,11 +51,10 @@ body.panel-open {
     align-items: center;
 }
 
-body.panel-open .content-wrapper {
-    min-height: 400px;
+/*body.panel-open .content-wrapper {
+    min-height: 100vh;
     max-height: none;
-    width: 100%;
-}
+}*/
 
 .leaf {
     width:40px;
@@ -154,6 +152,7 @@ select {
 
 .nft {
     background-color: #fffbf7;
+    color: #333333;
     padding: 0;
     margin-top:15px;
     border: 2.5rem solid transparent;
@@ -226,7 +225,6 @@ h3 {
 
 .description {
     font-size: 14px;
-    color: #333;
     line-height: 1.5;
     margin:0;
     padding:20px 0 0 0;
@@ -262,4 +260,13 @@ h3 {
 .tooltip:hover .tooltiptext {
     visibility: visible;
     opacity: 1;
+}
+
+body.night {
+    background: url(images/bg002.webp);
+}
+
+.night .nft {
+    background-color: #222222;
+    color:#fffbf7;
 }

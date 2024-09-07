@@ -4,8 +4,42 @@ document.addEventListener('DOMContentLoaded', () => {
     const deleteButton = document.getElementById('deleteWallet');
     const nftDisplay = document.getElementById('nftDisplay');
     const nftSelector = document.getElementById('nftSelector');
+    const body = document.body;
 
     const totalTraits = 15;  // Total number of traits in the NFT
+
+    // Create the star icon element
+    const starIcon = document.createElement('div');
+    starIcon.innerHTML = '🌝'; // Star symbol
+    starIcon.style.cssText = `
+        position: fixed;
+        top: 10px;
+        right: 20px;
+        font-size: 30px;
+        cursor: pointer;
+        z-index: 3;
+    `;
+    document.body.appendChild(starIcon);
+
+    // Function to toggle night mode
+    starIcon.addEventListener('click', () => {
+        body.classList.toggle('night');
+    });
+
+    // Function to check window size and apply/remove panel-open class
+    const checkWindowSize = () => {
+        if (window.innerWidth > 360) {
+            document.body.classList.add('panel-open');
+        } else {
+            document.body.classList.remove('panel-open');
+        }
+    };
+
+    // Initial check
+    checkWindowSize();
+
+    // Add event listener for window resize
+    window.addEventListener('resize', checkWindowSize);
 
     // Load stored data
     const loadStoredData = () => {
