@@ -51,11 +51,6 @@ body.panel-open {
     align-items: center;
 }
 
-/*body.panel-open .content-wrapper {
-    min-height: 100vh;
-    max-height: none;
-}*/
-
 .leaf {
     width:40px;
     position:fixed;
@@ -121,6 +116,36 @@ select {
     background-color: #e53935;
 }
 
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 270px;
+    background-color: #e0e0e0;
+    color: #333333;
+    font-family: "Solway", serif;
+    text-align: center;
+    font-weight:600;
+    border-radius: 4px 40px 40px 40px;
+    padding: 15px;
+    position: fixed;
+    z-index: 2;
+    top: 50px;
+    left: 40px;
+    margin-left: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+    box-shadow: 0 0 2px #888888;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
 .notice {
     color:#4CAF50;
 }
@@ -132,16 +157,19 @@ select {
 .notice,
 .alert {
     width: 270px;
-    background-color: #333333;
+    background-color: #e0e0e0;
     text-align: center;
+    font-family: "Solway", serif;
+    font-weight:600;
     border-radius: 4px 40px 40px 40px;
     padding: 15px;
     position: fixed;
     z-index: 1;
-    top: 50px; /* Position the tooltip above the image */
+    top: 50px;
     left: 40px;
-    margin-left: 0; /* Use half of the width to center the tooltip */
+    margin-left: 0;
     transition: opacity 0.3s;
+    box-shadow: 0 0 2px #888888;
 }
 
 #nftDisplay {
@@ -201,7 +229,6 @@ h3 {
     border-radius: 15px;
 }
 
-/* Add zoom and fade-in animation */
 @keyframes zoomFadeIn {
     0% {
         opacity: 0;
@@ -220,7 +247,7 @@ h3 {
     height: auto;
     margin-top: 10px;
     border-radius: 4px;
-    animation: zoomFadeIn 0.8s ease-in-out forwards; /* Apply animation */
+    animation: zoomFadeIn 0.8s ease-in-out forwards;
 }
 
 .description {
@@ -235,38 +262,37 @@ h3 {
     font-style: normal;
 }
 
-.tooltip {
-    position: relative;
-    display: inline-block;
-}
+/*** NIGHT MODE ***/
 
-.tooltip .tooltiptext {
-    visibility: hidden;
-    width: 270px;
-    background-color: #333333;
-    color: #fff;
-    text-align: center;
-    border-radius: 4px 40px 40px 40px;
-    padding: 15px;
-    position: fixed;
-    z-index: 2;
-    top: 50px; /* Position the tooltip above the image */
-    left: 40px;
-    margin-left: 0; /* Use half of the width to center the tooltip */
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.tooltip:hover .tooltiptext {
-    visibility: visible;
-    opacity: 1;
-}
+.night ::-webkit-scrollbar {
+    background-color:#111111;
+  }
 
 body.night {
     background: url(images/bg002.webp);
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 .night .nft {
     background-color: #222222;
     color:#fffbf7;
+}
+
+.night input,
+.night select {
+    background:#111111;
+    color:#fffbf7;
+}
+
+.night .tooltip .tooltiptext {
+    background:#333333;
+    color:#e0e0e0;
+}
+
+.night .notice,
+.night .alert {
+    background:#333333;
 }

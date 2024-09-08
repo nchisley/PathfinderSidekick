@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Create the star icon element
     const starIcon = document.createElement('div');
-    starIcon.innerHTML = '🌝'; // Star symbol
+    starIcon.innerHTML = '🌞'; // Moon symbol for day, will change to 🌚 for night
     starIcon.style.cssText = `
         position: fixed;
         top: 10px;
@@ -22,9 +22,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(starIcon);
 
     // Function to toggle night mode
-    starIcon.addEventListener('click', () => {
-        body.classList.toggle('night');
-    });
+    const toggleNightMode = () => {
+        const isNight = body.classList.toggle('night');
+        localStorage.setItem('nightMode', isNight);
+        starIcon.innerHTML = isNight ? '🌚' : '🌞'; // Change icon based on mode
+    };
+
+    // Event listener for the star icon
+    starIcon.addEventListener('click', toggleNightMode);
 
     // Function to check window size and apply/remove panel-open class
     const checkWindowSize = () => {
@@ -35,8 +40,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Initial check
+    // Initial check and set night mode if previously enabled
+    const loadNightMode = () => {
+        const isNight = localStorage.getItem('nightMode') === 'true';
+        if (isNight) {
+            body.classList.add('night');
+            starIcon.innerHTML = '🌚';
+        }
+    };
+
+    // Initial checks
     checkWindowSize();
+    loadNightMode();
 
     // Add event listener for window resize
     window.addEventListener('resize', checkWindowSize);
