@@ -154,20 +154,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 5000);
     }
     
-    // Function to fetch NFTs
+    // Function to fetch NFTs (Pathfinders collection id = b1fd6d81e11166a1e4ae373ba56f290e)
     async function fetchNFTs(walletAddress) {
         const apiKey = 'n8tr0ncrypto_sk_04oj4tc4cy2eiit3etxblx0bwspp1iua';
         const url = `https://api.simplehash.com/api/v0/nfts/owners?chains=solana&wallet_addresses=${walletAddress}&collection_ids=b1fd6d81e11166a1e4ae373ba56f290e`;
-
+    
         const response = await fetch(url, {
             headers: { 'X-API-KEY': apiKey, 'Accept': 'application/json' }
         });
-
+    
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-        const { nfts } = await response.json();
-        return nfts || [];
+    
+        const data = await response.json();
+        return data.nfts || [];
     }
+    
 
     // Function to calculate progress based on traits
     function calculateProgress(traits) {
