@@ -202,7 +202,7 @@ select {
 }*/
 
 h3 {
-    font-size: 16px;
+    font-size: 24px;
     margin:0;
     text-align:center;
     width:100%;
@@ -287,7 +287,7 @@ body.night {
     color:#fffbf7;
 }
 
-.night .tooltip .tooltiptext {
+/*.night .tooltip .tooltiptext {
     background:#333333;
     color:#e0e0e0;
 }
@@ -295,4 +295,8 @@ body.night {
 .night .notice,
 .night .alert {
     background:#333333;
+}*/
+
+.night .progress-container {
+    background-color:#000000;
 }

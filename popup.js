@@ -189,73 +189,81 @@ document.addEventListener('DOMContentLoaded', () => {
     function populateDropdown(nfts) {
         nftSelector.style.display = 'block';
         nftSelector.innerHTML = '';
-
-        nfts.forEach((nft, index) => {
+    
+        // Sort NFTs so those with a name come first, and the ones with "???" are at the end
+        const sortedNFTs = nfts.sort((a, b) => {
+            const nameA = a.name || "???";
+            const nameB = b.name || "???";
+            if (nameA === "???" && nameB !== "???") return 1; // Move "???" to the end
+            if (nameA !== "???" && nameB === "???") return -1; // Keep valid names first
+            return 0; // If both have valid names or both have "???", keep their original order
+        });
+    
+        // Populate the dropdown with sorted NFTs
+        sortedNFTs.forEach((nft, index) => {
             const option = document.createElement('option');
             option.value = index;
-            const firstName = nft.extra_metadata?.attributes.find(trait => trait.trait_type.toLowerCase() === 'first name')?.value || '???';
-            const lastName = nft.extra_metadata?.attributes.find(trait => trait.trait_type.toLowerCase() === 'last name')?.value || '???';
-            option.textContent = `${firstName} ${lastName}`;
+            const name = nft.name || '???';  // Fetch name from metadata
+            option.textContent = name;  // Display the name directly
             nftSelector.appendChild(option);
         });
-
+    
         nftSelector.addEventListener('change', (event) => {
-            displaySingleNFT(nfts[event.target.value]);
+            displaySingleNFT(sortedNFTs[event.target.value]);
         });
-    }
+    }      
 
     function displaySingleNFT(nft) {
         nftDisplay.innerHTML = '';  // Clear previous display
-
+    
         const container = document.createElement('div');
         container.className = 'nft';
-
-        const traits = nft.extra_metadata?.attributes || [];
-
+    
         const nameElement = document.createElement('h3');
-        const firstName = traits.find(trait => trait.trait_type.toLowerCase() === 'first name')?.value || '???';
-        const lastName = traits.find(trait => trait.trait_type.toLowerCase() === 'last name')?.value || '???';
-        nameElement.textContent = `${firstName} ${lastName}`;
+        const name = nft.name || '???';  // Fetch the name from metadata
+        nameElement.textContent = name;  // Display the name directly
         container.appendChild(nameElement);
-
+    
         const progressBarContainer = document.createElement('div');
         progressBarContainer.className = 'progress-container';
         const progressBar = document.createElement('div');
         progressBar.className = 'progress-bar';
+        const traits = nft.extra_metadata?.attributes || [];
         const progressPercentage = calculateProgress(traits);
         progressBar.style.width = `${progressPercentage}%`;
         progressBar.innerText = `${Math.floor(progressPercentage)}%`;
         progressBarContainer.appendChild(progressBar);
         container.appendChild(progressBarContainer);
-
+    
         if (nft.image_url) {
             const img = document.createElement('img');
             img.src = nft.image_url;
             img.className = 'nft-image';
             container.appendChild(img);
         }
-
+    
         const descriptionElement = document.createElement('p');
         descriptionElement.className = 'description';
         descriptionElement.innerHTML = generateDescription(nft);
         container.appendChild(descriptionElement);
-
+    
         nftDisplay.appendChild(container);
-    }
+    }    
 
     function generateDescription(nft) {
         const traits = nft.extra_metadata?.attributes.reduce((acc, trait) => {
             acc[trait.trait_type.toLowerCase()] = trait.value;
             return acc;
         }, {});
-
+    
         return `
-            <p>CHAPTER ONE<br><b>THE BEGINNING</b></p>Meet <b>${traits["first name"] || "???"}</b> <b>${traits["last name"] || "???"}</b>, a Pathfinder like no other. 
-            They dress in a <b>${traits["clothes"] || "distinctive clothing"}</b> with a unique <b>${traits["accessory"] || "???"}</b> accessory. 
-            They are accented by a <b>${traits["headgear"] || "???"}</b> on their head and a <b>${traits["backpiece"] || "???"}</b> on their back, adding to their remarkable appearance. 
-            With a <b>${traits["expression"] || "???"}</b> expression and a <b>${traits["nose"] || "???"}</b> nose, they choose to maintain a <b>${traits["hairstyle"] || "???"}</b> hairstyle. 
-            They often carry a <b>${traits["mouth item"] || "None"}</b> mouth item and boast a <b>${traits["body marking"] || "???"}</b> body marking. 
-            With <b>${traits["eye color"] || "???"}</b> eyes and <b>${traits["skin color"] || "???"}</b> skin, this proud member of the <b>${traits["faction"] || "???"}</b> faction stands out against a <b>${traits["background"] || "???"}</b>.
+            <p>CHAPTER ONE<br><b>THE BEGINNING</b></p>
+            Meet <b><u>${nft.name || "???"}</u></b>, a Pathfinder like no other. 
+            They dress in a <b><u>${traits["clothes"] || "distinctive clothing"}</u></b> with a unique <b><u>${traits["accessory"] || "???"}</u></b> accessory. 
+            They are accented by a <b><u>${traits["headgear"] || "???"}</u></b> on their head and a <b><u>${traits["backpiece"] || "???"}</u></b> on their back, adding to their remarkable appearance. 
+            With a <b><u>${traits["expression"] || "???"}</u></b> expression and a <b><u>${traits["nose"] || "???"}</u></b> nose, they choose to maintain a <b><u>${traits["hairstyle"] || "???"}</u></b> hairstyle. 
+            They often carry a <b><u>${traits["mouth item"] || "None"}</u></b> mouth item and boast a <b><u>${traits["body marking"] || "???"}</u></b> body marking. 
+            With <b><u>${traits["eye color"] || "???"}</u></b> eyes and <b><u>${traits["skin color"] || "???"}</u></b> skin, this proud member of the <b><u>${traits["faction"] || "???"}</u></b> faction stands out against the <b><u>${traits["background"] || "???"}</u></b> of their homeland.
         `;
-    }
+    }    
 });
